@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require("axios");
 
 const {
   GraphQLObjectType,
@@ -7,11 +7,11 @@ const {
   GraphQLBoolean,
   GraphQLList,
   GraphQLSchema
-} = require('graphql');
+} = require("graphql");
 
 // Launch Type
 const LaunchType = new GraphQLObjectType({
-  name: 'Launch',
+  name: "Launch",
   fields: () => ({
     flight_number: { type: GraphQLInt },
     mission_name: { type: GraphQLString },
@@ -24,23 +24,28 @@ const LaunchType = new GraphQLObjectType({
 
 // Rocket Type
 const RocketType = new GraphQLObjectType({
-  name: 'Rocket',
+  name: "Rocket",
   fields: () => ({
     rocket_id: { type: GraphQLString },
     rocket_name: { type: GraphQLString },
-    rocket_type: { type: GraphQLString }
+    description: { type: GraphQLString },
+    wikipedia: { type: GraphQLString },
+    active: { type: GraphQLBoolean },
+    first_flight: { type: GraphQLString },
+    cost_per_launch: { type: GraphQLInt },
+    success_rate_pct: { type: GraphQLInt }
   })
 });
 
 // Root Query
 const RootQuery = new GraphQLObjectType({
-  name: 'RootQueryType',
+  name: "RootQueryType",
   fields: {
     launches: {
       type: new GraphQLList(LaunchType),
       resolve(parent, args) {
         return axios
-          .get('https://api.spacexdata.com/v3/launches')
+          .get("https://api.spacexdata.com/v3/launches")
           .then(res => res.data);
       }
     },
@@ -59,18 +64,18 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(RocketType),
       resolve(parent, args) {
         return axios
-          .get('https://api.spacexdata.com/v3/rockets')
+          .get("https://api.spacexdata.com/v3/rockets")
           .then(res => res.data);
       }
     },
     rocket: {
       type: RocketType,
       args: {
-        id: { type: GraphQLInt }
+        rocket_id: { type: GraphQLString }
       },
       resolve(parent, args) {
         return axios
-          .get(`https://api.spacexdata.com/v3/rockets/${args.id}`)
+          .get(`https://api.spacexdata.com/v3/rockets/${args.rocket_id}`)
           .then(res => res.data);
       }
     }
