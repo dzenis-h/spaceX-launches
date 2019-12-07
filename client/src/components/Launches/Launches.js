@@ -2,9 +2,9 @@ import React, { Component, Fragment } from "react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import LaunchItem from "./LaunchItem";
-import MissionKey from "./MissionKey";
+import MissionKey from "../helper/MissionKey";
 
-import Spinner from "./Spinner/Spinner";
+import Loading from "../helper/Loading/Loading";
 
 const LAUNCHES_QUERY = gql`
   query LaunchesQuery {
@@ -21,11 +21,10 @@ export class Launches extends Component {
   render() {
     return (
       <Fragment>
-        <h1 className="display-4 my-3">Launches</h1>
         <MissionKey />
         <Query query={LAUNCHES_QUERY}>
           {({ loading, error, data }) => {
-            if (loading) return <Spinner />;
+            if (loading) return <Loading />;
             if (error) console.log(error);
 
             return (

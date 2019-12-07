@@ -3,7 +3,8 @@ import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
-import Spinner from "./Spinner/Spinner";
+// import Spinner from "../helper/Spinner/Spinner";
+import Loading from "../helper/Loading/Loading";
 
 const LAUNCH_QUERY = gql`
   query LaunchQuery($flight_number: Int!) {
@@ -16,7 +17,9 @@ const LAUNCH_QUERY = gql`
       rocket {
         rocket_id
         rocket_name
-        rocket_type
+        description
+        wikipedia
+        active
       }
     }
   }
@@ -30,7 +33,7 @@ export class Launch extends Component {
       <Fragment>
         <Query query={LAUNCH_QUERY} variables={{ flight_number }}>
           {({ loading, error, data }) => {
-            if (loading) return <Spinner />;
+            if (loading) return <Loading />;
             if (error) console.log(error);
 
             const {
@@ -38,7 +41,7 @@ export class Launch extends Component {
               flight_number,
               launch_year,
               launch_success,
-              rocket: { rocket_id, rocket_name, rocket_type }
+              rocket: { rocket_name, active }
             } = data.launch;
 
             return (
@@ -69,16 +72,23 @@ export class Launch extends Component {
 
                 <h4 className="my-3">Rocket Details</h4>
                 <ul className="list-group">
-                  <li className="list-group-item">Rocket ID: {rocket_id}</li>
                   <li className="list-group-item">
                     Rocket Name: {rocket_name}
                   </li>
                   <li className="list-group-item">
-                    Rocket Type: {rocket_type}
+                    Rocket Active:{" "}
+                    <span
+                      className={classNames({
+                        "text-success": active,
+                        "text-danger": !active
+                      })}
+                    >
+                      {active ? "Yes" : "No"}
+                    </span>
                   </li>
                 </ul>
                 <hr />
-                <Link to="/" className="btn btn-secondary">
+                <Link to="/launches" className="btn btn-secondary">
                   Back
                 </Link>
               </div>
